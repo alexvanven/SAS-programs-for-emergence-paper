@@ -1,4 +1,5 @@
 /*this program creates a barchart of the number of articles per cluster, with genres as subgroups*/
+/*sumyear_select_cluster is created in eima program*/
 data barchart;
 set sumyear_selec_cluster;
 label _name_='Genre';
