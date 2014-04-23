@@ -1,0 +1,18 @@
+/* generate plot of number of articles with genres between 1986 and 1999*/
+goptions reset=all hsize=10cm vsize=10cm;
+axis1 label=(a=90 f="Arial/Bold" "Number of Articles");
+axis2 label=(f="Arial/Bold" "Year");
+ods listing close;
+ods pdf style=printer file="mygraph.pdf";
+/*footnote j=l 'Source: EIMA';*/
+/*symbol1 interpol=join v=none c=red;*/
+/*proc gbarline data=eima.eima_18042014_weighted;
+bar year / discrete sumvar=articles ;
+by cluster;
+run;*/
+proc gchart data=eima.eima_18042014_weighted;
+vbar year / discrete sumvar=articles outside=sum raxis=axis1 maxis=axis2;
+by cluster;
+run;
+ods pdf close;
+ods listing;
