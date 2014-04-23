@@ -1,0 +1,30 @@
+/*this program creates a barchart of the number of articles per cluster, with genres as subgroups*/
+data barchart;
+set sumyear_selec_cluster;
+label _name_='Genre';
+run;
+proc sort data=barchart;
+by cluster publication_year;
+run;
+/* generate plot of number of articles with genres between 1986 and 1999*/
+goptions reset=all hsize=15cm vsize=10cm;
+legend1 across=1 shape=bar(3,2)
+ label=("Genre" position=(top center))
+ cborder=black position=(top outside right)
+ offset=(-7,-7);
+axis1 label=(a=90 f="Arial/Bold" "Number of Articles");
+axis2 label=(f="Arial/Bold" "Year");
+ods listing close;
+ods pdf style=printer file="mygraph.pdf";
+/*footnote j=l 'Source: EIMA';*/
+/*symbol1 interpol=join v=none c=red;*/
+/*proc gbarline data=eima.eima_18042014_weighted;
+bar year / discrete sumvar=articles ;
+by cluster;
+run;*/
+proc gchart data=barchart;
+vbar publication_year / discrete sumvar=sum outside=sum subgroup=_name_ raxis=axis1 maxis=axis2 legend=legend1;
+by cluster;
+run;
+ods pdf close;
+ods listing;
