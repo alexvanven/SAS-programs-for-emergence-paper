@@ -1,0 +1,36 @@
+/*this program correlates the number of releases per genre with the number of compilations with the name of
+the genre*/
+/*could be improved in the search for the term so that it could differentiate between combined genres
+acid house and house or breakbeat house - which would not be taken as house*/
+%let genre=triphop;
+data compilations;
+set discogs6;
+title_upc=UPCASE(title);
+compilation=find(descriptions,'Compilation',"i");/*i means ignore case*/
+/*genre=find(title,'acidjazz',"i");*/
+genre=prxmatch("/trip\s*hop/i",title);/*use regex to search for various spelling*/
+if compilation>0;
+if genre>0;
+run;
+proc freq;
+tables year /nocol norow nopercent out=b ; 
+run;
+proc freq data=discogs9;
+tables year*&genre/ nocol norow nopercent out=a ;
+run;
+data a (rename=count=countreleases);
+set a;
+if &genre=1;
+run;
+data c;
+merge a b;
+by year;
+if count=. then count=0;
+if countreleases=. then countreleases=0;
+run;
+ods graphics on;
+proc corr data=c plots=scatter;
+var countreleases count;
+run;
+ods graphics off;
+
