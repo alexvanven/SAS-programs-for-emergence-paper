@@ -1,0 +1,8 @@
+data pvalue;
+log1= -19.6313;
+log2= -16.2925;
+df=2; chisq=-2*(log1-log2);
+pvalue=1-probchi(chisq,df);
+run;
+proc print data=pvalue noobs;
+run;
