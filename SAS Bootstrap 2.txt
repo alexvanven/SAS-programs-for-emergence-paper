@@ -1,19 +1,26 @@
 data eima_final11;
-set eima.eima_15042014;
+set eima.eima_18042014_unweighted;
 if time=0 then delete;
 if time=1 then delete;
 run;
 
-%let rep = 1000;
+%let rep = 503;
 proc surveyselect data= eima_final11 out=bootsample
-     seed = 1347 method = urs
+     seed = 13456 method = urs
 	 samprate = 1 outhits rep = &rep;
 run;
 ods listing close;
 proc genmod data=bootsample;
-model emergence=lagemergence lagarticles lagchangearticles lagnrofreleases lagnrofreleases_2nd/ dist=poisson;
+model emergence=lagemergence lagarticles lagchangearticles / dist=poisson;
 by replicate;
 ods output ParameterEstimates=work.parameter_dataset;/*create a dataset with the parameter estimates*/
+run;
+
+data parameter_dataset;
+set parameter_dataset;
+if replicate = 421 then delete;
+if replicate = 359 then delete;
+if replicate = 280 then delete;
 run;
 
 %macro rand_anl(
@@ -39,7 +46,7 @@ put "Randomization test for &TESTLABEL " %if "&WHERE" ne "" %then "where &WHERE"
     run;
 %mend rand_anl;
 
-%rand_anl(randdata=parameter_dataset, where=parameter='lagarticles', testprob=estimate,testlabel=poisson)
+%rand_anl(randdata=parameter_dataset, where=parameter='lagchangearticles', testprob=estimate,testlabel=poisson)
 data test5;
 set test4;
 if replicate^=0;
